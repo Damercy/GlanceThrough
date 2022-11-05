@@ -1,6 +1,8 @@
 package dev.dayaonweb.glancesample
 
-import android.graphics.fonts.Font
+
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,17 +18,21 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.background
 import androidx.glance.layout.*
-import androidx.glance.text.FontStyle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.text.FontWeight
 import dev.dayaonweb.glancesample.ui.theme.GlanceSampleTheme
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +89,12 @@ fun ExampleAppWidgetContent() {
 
 @Composable
 fun TicketDetails() {
+    val location = rememberSaveable {
+        23.520445f to 87.311920f
+    }
+    val locationUri =
+        String.format(Locale.getDefault(), "geo:%f,%f", location.first, location.second)
+    val openMapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(locationUri))
     Column {
         Text(
             text = "Zomaland 2022", style = TextStyle(
@@ -106,15 +118,25 @@ fun TicketDetails() {
             ),
             maxLines = 1
         )
-        Text(
-            modifier = GlanceModifier
-                .padding(bottom = 2.dp),
-            text = "Haveli Road, Mumbai", style = TextStyle(
-                color = ColorProvider(Color.Black),
-                fontSize = 10.sp,
-            ),
-            maxLines = 1
-        )
+        Row(verticalAlignment = Alignment.Vertical.CenterVertically){
+            Text(
+                modifier = GlanceModifier
+                    .padding(bottom = 2.dp)
+                    .clickable(actionStartActivity(openMapIntent)),
+                text = "Haveli Road, Mumbai", style = TextStyle(
+                    color = ColorProvider(Color.Black),
+                    fontSize = 10.sp,
+                ),
+                maxLines = 1
+            )
+            Image(
+                provider = ImageProvider(R.drawable.ic_outline_location),
+                contentDescription = "Event location",
+                modifier = GlanceModifier
+                    .size(12.dp)
+                    .clickable(actionStartActivity(openMapIntent))
+            )
+        }
         Text(
             modifier = GlanceModifier
                 .background(ImageProvider(R.drawable.bg_rounded_8))
