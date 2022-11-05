@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GlanceSample</string>
+    <string name="sample_qr_code">Sample QR code</string>
+</resources>
