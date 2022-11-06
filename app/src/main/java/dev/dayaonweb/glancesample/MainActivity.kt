@@ -15,21 +15,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.GlanceModifier
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.appWidgetBackground
-import androidx.glance.background
 import androidx.glance.layout.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.glance.*
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.text.FontWeight
 import dev.dayaonweb.glancesample.ui.theme.GlanceSampleTheme
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import java.util.*
@@ -62,9 +60,44 @@ class ExampleAppWidget : GlanceAppWidget() {
 
     @Composable
     override fun Content() {
-        ExampleAppWidgetContent()
+        val isUserLoggedIn = rememberSaveable { false }
+
+        if (isUserLoggedIn)
+            ExampleAppWidgetContent()
+        else
+            LoginContent()
     }
 
+}
+
+@Composable
+fun LoginContent() {
+    Column(
+        modifier = GlanceModifier
+            .appWidgetBackground()
+            .fillMaxSize()
+            .background(ImageProvider(R.drawable.bg_rounded_24))
+            .padding(8.dp),
+        verticalAlignment = Alignment.Vertical.CenterVertically,
+        horizontalAlignment = Alignment.Horizontal.CenterHorizontally
+    ) {
+        Text(
+            modifier = GlanceModifier
+                .padding(bottom = 8.dp),
+            text = "Kindly login to your account to view latest tickets.",
+            style = TextStyle(
+                color = ColorProvider(Color.Black),
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
+        )
+        Button(
+            modifier = GlanceModifier
+                .wrapContentWidth(),
+            text = "Login",
+            onClick = actionStartActivity(Intent(LocalContext.current, MainActivity::class.java)),
+        )
+    }
 }
 
 
@@ -118,7 +151,7 @@ fun TicketDetails() {
             ),
             maxLines = 1
         )
-        Row(verticalAlignment = Alignment.Vertical.CenterVertically){
+        Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
             Text(
                 modifier = GlanceModifier
                     .padding(bottom = 2.dp)
